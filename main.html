@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Speak Up!</title>
+<style>
+:root{--bg:#0b0b0c;--fg:#f5f6f7;--muted:#b8bcc2;--accent:#2563eb;--card:#131418;--border:#26282c}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;position:relative;overflow:hidden;}
+body::before{content:"";position:absolute;inset:0;background:url('asb.jpg') center/cover no-repeat;filter:blur(1px);z-index:0;}
+.wrap{position:relative;padding:20px;border-radius:15px;width:min(680px,92vw);display:flex;flex-direction:column;gap:20px;z-index:1;}
+h1{font-size:2rem;text-align:center;margin-bottom:10px;color:var(--fg)}
+.flags{display:flex;justify-content:center;gap:18px}
+.flag{font-size:44px;line-height:1;padding:0px 0px;border-radius:0px;border:none;background:transparent;cursor:pointer;transition:.2s transform}
+.flag.active{transform:scale(1.15)}
+.flag:active{transform:scale(.98)}
+.btns{display:flex;flex-direction:column;gap:16px;align-items:center}
+.btn-container{display:flex;flex-direction:column;gap:0px;width:100%}
+.btn{font-family:"Open Sans",sans-serif;font-size:16px;letter-spacing:2px;text-decoration:none;text-transform:uppercase;color:#000;cursor:pointer;border:3px solid;padding:0.25em 0.5em;box-shadow:1px 1px 0px 0px,2px 2px 0px 0px,3px 3px 0px 0px,4px 4px 0px 0px,5px 5px 0px 0px;position:relative;user-select:none;-webkit-user-select:none;touch-action:manipulation;border-radius:3px;transition:all .25s ease;}
+.btn:hover{background:rgba(255, 255, 255, 0.747);}
+#btn2{box-shadow:1px 1px 0px 0px #fff,2px 2px 0px #fff,3px 3px 0px #fff,4px 4px 0px #fff,5px 5px 0px #fff;}
+#btn3{box-shadow:1px 1px 0px 0px #007a3d,2px 2px 0px #007a3d,3px 3px 0px #007a3d,4px 4px 0px #007a3d,5px 5px 0px #007a3d;}
+.btn:active{box-shadow:0px 0px 0px 0px;top:5px;left:5px;}
+@media (min-width: 768px){.btn{padding:0.25em 0.75em;}}
+.subtext{font-size:.9rem;color:var(--fg);background:rgba(0,0,0,0.5);padding:6px 10px;border-radius:1px;width:100%;}
+.panel{display:none;flex-direction:column;gap:12px;padding:16px;border:1px solid var(--border);border-radius:14px;background:var(--card)}
+.links{display:flex;flex-direction:column;gap:10px}
+.links a{word-break:break-all;color:var(--fg);text-decoration:underline}
+.tag{display:inline-flex;gap:8px;align-items:center;font-size:.9rem;color:var(--muted)}
+@media (min-width:560px){.btn{font-size:1.1rem}.flag{font-size:52px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1 id="mainTitle">Speak Up for Those Who Can't</h1>
+<div class="flags">
+<button class="flag active" data-lang="nl" aria-label="Nederlands">🇳🇱</button>
+<button class="flag" data-lang="en" aria-label="English">🇬🇧</button>
+</div>
+<div class="btns">
+<div class="btn-container">
+<button id="btn1" class="btn">Laat Je Stem Horen</button>
+<div class="subtext" id="btn1sub">Stuur een e-mail naar de Nederlandse regering</div>
+</div>
+<div class="btn-container">
+<button id="btn2" class="btn">Doneren</button>
+<div class="subtext" id="btn2sub">Doneren</div>
+</div>
+<div class="btn-container">
+<button id="btn3" class="btn">Bewijs van Genocide op Palestijnen door Israel</button>
+<div class="subtext" id="btn3sub">Onafhankelijke en neutrale bronnen die het bewijs van de Palestijnse genocide door Israël tonen</div>
+<div class="panel" id="evidencePanel">
+<div class="links" id="links"></div>
+</div>
+</div>
+</div>
+</div>
+<script>
+const ui = {
+mainTitle: document.getElementById('mainTitle'),
+flags: document.querySelectorAll('.flag'),
+btn1: document.getElementById('btn1'),
+btn1sub: document.getElementById('btn1sub'),
+btn2: document.getElementById('btn2'),
+btn2sub: document.getElementById('btn2sub'),
+btn3: document.getElementById('btn3'),
+btn3sub: document.getElementById('btn3sub'),
+panel: document.getElementById('evidencePanel'),
+links: document.getElementById('links')
+};
+
+const i18n = {
+nl:{
+btn1:'Stuur een e-mail!',
+btn1sub:'Stuur een voorgeschreven e-mail naar alle Tweede Kamerleden en maak je zorgen kenbaar.',
+btn2:'Doe een Donatie!',
+btn2sub:'Steun United for Gaza met een donatie voor levensreddende hulp zoals water en voedselpakketten.',
+btn3:'Bronnen',
+btn3sub:'Onafhankelijke en neutrale bronnen die het bewijs van de Palestijnse genocide door Israël tonen.',
+subject:'STOP het Geweld',
+body:`Beste Leden van de Tweede Kamer en Ministers van Nederland,
+
+De aanhoudende crisis in Gaza vereist uw onmiddellijke aandacht en actie. Als vertegenwoordigers van een natie die zich inzet voor mensenrechten en internationaal recht, bekleedt u geprivilegieerde en machtige posities om een verschil te maken. Wij roepen u dringend op om een onmiddellijk einde te eisen aan het geweld in Gaza, dat enorm lijden en verlies van mensenlevens heeft veroorzaakt. Daarnaast smeken wij u om te pleiten voor uitgebreide sancties tegen Israël om verdere escalatie te stoppen en verantwoording te waarborgen. Uw leiderschap is cruciaal om rechtvaardigheid te handhaven, onschuldige levens te beschermen en de toewijding van Nederland aan wereldwijde vrede en solidariteit te versterken. Handel nu om verdere tragedie te voorkomen.`
+},
+en:{
+btn1:'Send an Email!',
+btn1sub:'Send a pre-written email to all members of the Dutch Parliament to express your concerns.',
+btn2:'Make a Donation!',
+btn2sub:'Support United for Gaza with a donation for life-saving aid such as water and food packages.',
+btn3:'Sources',
+btn3sub:'Independent and neutral sources showing evidence of the ongoing genocide of Palestinians by Israel.',
+subject:'STOP the violence',
+body:`Dear Members of the Tweede Kamer and Ministers of the Netherlands,
+
+The ongoing crisis in Gaza demands your immediate attention and action. As representatives of a nation committed to human rights and international law, you hold privileged and powerful positions to make a difference. We urgently call on you to demand an immediate cessation of the violence in Gaza, which has caused immense suffering and loss of life. Furthermore, we implore you to advocate for comprehensive sanctions against Israel to halt further escalation and ensure accountability. Your leadership is critical in upholding justice, protecting innocent lives, and reinforcing the Netherlands’ commitment to global peace and solidarity. Act now to prevent further tragedy.`
+}
+};
+
+let lang = 'nl';
+const recipients = [
+  "m.aardema@tweedekamer.nl",
+  "t.aartsen@tweedekamer.nl",
+  "i.elabassi@tweedekamer.nl",
+  "s.vanbaarle@tweedekamer.nl",
+  "m.bamenga@tweedekamer.nl",
+  "t.baudet@tweedekamer.nl",
+  "b.becker@tweedekamer.nl",
+  "s.beckerman@tweedekamer.nl",
+  "m.debeer@tweedekamer.nl",
+  "h.bevers@tweedekamer.nl",
+  "m.bikker@tweedekamer.nl",
+  "b.bikkers@tweedekamer.nl",
+  "r.blaauw@tweedekamer.nl",
+  "h.bontenbal@tweedekamer.nl",
+  "d.boomsma@tweedekamer.nl",
+  "m.boon@tweedekamer.nl",
+  "v.vandenborn@tweedekamer.nl",
+  "m.bosma@tweedekamer.nl",
+  "d.boswijk@tweedekamer.nl",
+  "w.boutkan@tweedekamer.nl",
+  "l.bromet@tweedekamer.nl",
+  "f.bruyning@tweedekamer.nl",
+  "e.vanderburg@tweedekamer.nl",
+  "m.buijsse@tweedekamer.nl",
+  "j.bushoff@tweedekamer.nl",
+  "t.vancampen@tweedekamer.nl",
+  "d.ceder@tweedekamer.nl",
+  "g.chakor@tweedekamer.nl",
+  "r.claassen@tweedekamer.nl",
+  "p.crijns@tweedekamer.nl",
+  "l.dassen@tweedekamer.nl",
+  "m.deen@tweedekamer.nl",
+  "r.dekker@tweedekamer.nl",
+  "t.vandijck@tweedekamer.nl",
+  "j.dijk@tweedekamer.nl",
+  "d.vandijk@tweedekamer.nl",
+  "e.vandijk@tweedekamer.nl",
+  "i.vandijk@tweedekamer.nl",
+  "o.vandijk@tweedekamer.nl",
+  "s.dobbe@tweedekamer.nl",
+  "r.dral@tweedekamer.nl",
+  "j.eerdmans@tweedekamer.nl",
+  "w.vaneijk@tweedekamer.nl",
+  "u.ellian@tweedekamer.nl",
+  "d.ergin@tweedekamer.nl",
+  "s.erkens@tweedekamer.nl",
+  "e.esser@tweedekamer.nl",
+  "c.faddegon@tweedekamer.nl",
+  "a.flach@tweedekamer.nl",
+  "g.gabriels@tweedekamer.nl",
+  "d.graus@tweedekamer.nl",
+  "p.grinwis@tweedekamer.nl",
+  "p.degroot@tweedekamer.nl",
+  "m.haage@tweedekamer.nl",
+  "p.vanhaasen@tweedekamer.nl",
+  "j.hartsuiker@tweedekamer.nl",
+  "e.heinen@tweedekamer.nl",
+  "a.heite@tweedekamer.nl",
+  "l.helder@tweedekamer.nl",
+  "r.hertzberger@tweedekamer.nl",
+  "h.heutink@tweedekamer.nl",
+  "e.vanhijum@tweedekamer.nl",
+  "j.vandenhil@tweedekamer.nl",
+  "d.hirsch@tweedekamer.nl",
+  "p.vanderhoeff@tweedekamer.nl",
+  "h.holman@tweedekamer.nl",
+  "h.dhoop@tweedekamer.nl",
+  "p.vanhouwelingen@tweedekamer.nl",
+  "f.idsinga@tweedekamer.nl",
+  "d.jansen@tweedekamer.nl",
+  "f.jansen@tweedekamer.nl",
+  "r.jetten@tweedekamer.nl",
+  "l.dejong@tweedekamer.nl",
+  "a.joseph@tweedekamer.nl",
+  "i.kahraman@tweedekamer.nl",
+  "r.kamminga@tweedekamer.nl",
+  "b.kathmann@tweedekamer.nl",
+  "b.vankent@tweedekamer.nl",
+  "a.kisteman@tweedekamer.nl",
+  "j.klaver@tweedekamer.nl",
+  "m.koekkoek@tweedekamer.nl",
+  "w.koops@tweedekamer.nl",
+  "a.kops@tweedekamer.nl",
+  "d.dekort@tweedekamer.nl",
+  "rvd.pers.kh@minaz.nl",
+  "info@minienw.nl",
+  "info@minszw.nl",
+  "info@minbzk.nl",
+  "info@minbuza.nl",
+  "info@minjenv.nl",
+  "info@minbzk.nl",
+  "info@minjenv.nl",
+  "info@minfin.nl",
+  "info@minienw.nl",
+  "info@minbuza.nl",
+  "info@mindef.nl",
+  "info@minez.nl"
+];
+
+const sources = {
+nl:[
+{name:"↗ Human Rights Watch Rapport",url:"https://www.hrw.org/news/2024/11/14/israels-crimes-against-humanity-gaza"},
+{name:"↗ OHCHR Persbericht",url:"https://www.ohchr.org/en/press-releases/2025/06/israeli-attacks-educational-religious-and-cultural-sites-occupied"},
+{name:"↗ Amnesty International Rapport",url:"https://www.amnesty.org/en/location/middle-east-and-north-africa/middle-east/israel-and-the-occupied-palestinian-territory/report-israel-and-the-occupied-palestinian-territory/"},
+{name:"↗ AFSC Israelische Schendingen",url:"https://afsc.org/israeli-violations"},
+{name:"↗ Artsen zonder Grenzen Rapport",url:"https://www.doctorswithoutborders.org/latest/gaza-death-trap-msf-report-exposes-israels-campaign-total-destruction"}
+],
+en:[
+{name:"↗ Human Rights Watch Report",url:"https://www.hrw.org/news/2024/11/14/israels-crimes-against-humanity-gaza"},
+{name:"↗ OHCHR Press Release",url:"https://www.ohchr.org/en/press-releases/2025/06/israeli-attacks-educational-religious-and-cultural-sites-occupied"},
+{name:"↗ Amnesty International Report",url:"https://www.amnesty.org/en/location/middle-east-and-north-africa/middle-east/israel-and-the-occupied-palestinian-territory/report-israel-and-the-occupied-palestinian-territory/"},
+{name:"↗ AFSC Israeli Violations",url:"https://afsc.org/israeli-violations"},
+{name:"↗ Doctors Without Borders Report",url:"https://www.doctorswithoutborders.org/latest/gaza-death-trap-msf-report-exposes-israels-campaign-total-destruction"}
+]
+};
+
+function applyLang(){
+const t=i18n[lang];
+ui.mainTitle.textContent=t.title;
+ui.btn1.textContent=t.btn1;
+ui.btn1sub.textContent=t.btn1sub;
+ui.btn2.textContent=t.btn2;
+ui.btn2sub.textContent=t.btn2sub;
+ui.btn3.textContent=t.btn3;
+if(ui.panel.style.display==='none'){ui.btn3sub.textContent=t.btn3sub;}
+document.documentElement.lang=lang;
+renderSources();
+}
+
+function renderSources(){
+ui.links.innerHTML='';
+sources[lang].forEach(s=>{
+const a=document.createElement('a');
+a.href=s.url;
+a.target="_blank";
+a.rel="noopener";
+a.textContent=s.name;
+ui.links.appendChild(a);
+});
+}
+
+function openMail(){
+const t=i18n[lang];
+const to=recipients.join(',');
+const subject=encodeURIComponent(t.subject);
+const body=encodeURIComponent(t.body);
+const href=`mailto:${to}?subject=${subject}&body=${body}`;
+const a=document.createElement('a');
+a.href=href;
+a.style.display='none';
+document.body.appendChild(a);
+a.click();
+a.remove();
+}
+
+ui.flags.forEach(btn=>{
+btn.addEventListener('click',()=>{
+ui.flags.forEach(b=>b.classList.remove('active'));
+btn.classList.add('active');
+lang=btn.dataset.lang;
+applyLang();
+});
+});
+
+ui.btn1.addEventListener('click',openMail);
+ui.btn2.addEventListener('click',()=>{window.open('https://www.chuffed.org/fundraiser/dutchrevert','_blank','noopener');});
+ui.btn3.addEventListener('click',()=>{
+const isVisible=ui.panel.style.display==='flex';
+ui.panel.style.display=isVisible?'none':'flex';
+const t=i18n[lang];
+ui.btn3sub.textContent=isVisible?t.btn3sub:'';
+});
+
+applyLang();
+</script>
+</body>
+
+
+</html>
